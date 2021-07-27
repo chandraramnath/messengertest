@@ -1,13 +1,24 @@
 'use strict';
 
 // Imports dependencies and set up http server
+var https = require('https');
+var fs = require('fs');
+const port = 1337;
+var options = {
+    key: fs.readFileSync('./certs/server-key.pem'),
+    cert: fs.readFileSync('./certs/server-cert.pem'),
+};
+
 const
   express = require('express'),
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()); // creates express http server
 
+var server = https.createServer(options, app).listen(port, function(){
+    console.log("webhook is listening. Express server listening on port " + port);
+});
 // Sets server port and logs message on success
-app.listen(process.env.PORT || 1337, () => console.log('webhook is listening', process.env.PORT));
+// app.listen(process.env.PORT || 1337, () => console.log('webhook is listening', process.env.PORT));
 
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
